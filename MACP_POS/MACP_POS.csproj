@@ -52,11 +52,29 @@
     <Compile Include="FormCardDetails.Designer.cs">
       <DependentUpon>FormCardDetails.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormChange.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormChange.Designer.cs">
+      <DependentUpon>FormChange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormChequeAmt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormChequeAmt.Designer.cs">
+      <DependentUpon>FormChequeAmt.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormChequeDetails.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormChequeDetails.Designer.cs">
       <DependentUpon>FormChequeDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCreditVerSlip.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCreditVerSlip.Designer.cs">
+      <DependentUpon>FormCreditVerSlip.cs</DependentUpon>
     </Compile>
     <Compile Include="FormGiftCard.cs">
       <SubType>Form</SubType>
@@ -70,17 +88,41 @@
     <Compile Include="FormLogin.Designer.cs">
       <DependentUpon>FormLogin.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormLoyaltyCard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLoyaltyCard.Designer.cs">
+      <DependentUpon>FormLoyaltyCard.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormMain1.cs">
+    <Compile Include="FormMain3.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormMain1.Designer.cs">
-      <DependentUpon>FormMain1.cs</DependentUpon>
+    <Compile Include="FormMain3.Designer.cs">
+      <DependentUpon>FormMain3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormMemberID.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMemberID.Designer.cs">
+      <DependentUpon>FormMemberID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormPayment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormPayment.Designer.cs">
+      <DependentUpon>FormPayment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormPrivilegeCard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormPrivilegeCard.Designer.cs">
+      <DependentUpon>FormPrivilegeCard.cs</DependentUpon>
     </Compile>
     <Compile Include="FormSearchCustomer.cs">
       <SubType>Form</SubType>
@@ -88,13 +130,28 @@
     <Compile Include="FormSearchCustomer.Designer.cs">
       <DependentUpon>FormSearchCustomer.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormSecondScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSecondScreen.Designer.cs">
+      <DependentUpon>FormSecondScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormCardDetails.resx">
       <DependentUpon>FormCardDetails.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormChange.resx">
+      <DependentUpon>FormChange.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormChequeAmt.resx">
+      <DependentUpon>FormChequeAmt.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormChequeDetails.resx">
       <DependentUpon>FormChequeDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCreditVerSlip.resx">
+      <DependentUpon>FormCreditVerSlip.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormGiftCard.resx">
       <DependentUpon>FormGiftCard.cs</DependentUpon>
@@ -102,14 +159,29 @@
     <EmbeddedResource Include="FormLogin.resx">
       <DependentUpon>FormLogin.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormLoyaltyCard.resx">
+      <DependentUpon>FormLoyaltyCard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormMain1.resx">
-      <DependentUpon>FormMain1.cs</DependentUpon>
+    <EmbeddedResource Include="FormMain3.resx">
+      <DependentUpon>FormMain3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMemberID.resx">
+      <DependentUpon>FormMemberID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormPayment.resx">
+      <DependentUpon>FormPayment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormPrivilegeCard.resx">
+      <DependentUpon>FormPrivilegeCard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSearchCustomer.resx">
       <DependentUpon>FormSearchCustomer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSecondScreen.resx">
+      <DependentUpon>FormSecondScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -142,6 +214,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\signal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AxWMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
