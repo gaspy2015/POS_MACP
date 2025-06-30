@@ -1,4 +1,4 @@
-﻿namespace MACP_POS
+﻿namespace MACP_POS.Forms
 {
     partial class FormMain
     {

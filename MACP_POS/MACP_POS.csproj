@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
@@ -46,141 +47,150 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FormCardDetails.cs">
+    <Compile Include="DataAccess\ConnectionInfo.cs" />
+    <Compile Include="DataAccess\ConnectionManager.cs" />
+    <Compile Include="DataAccess\DBHelper.cs" />
+    <Compile Include="Forms\ConnectionConfigurationForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormCardDetails.Designer.cs">
+    <Compile Include="Forms\ConnectionConfigurationForm.Designer.cs">
+      <DependentUpon>ConnectionConfigurationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormCardDetails.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormCardDetails.Designer.cs">
       <DependentUpon>FormCardDetails.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormChange.cs">
+    <Compile Include="Forms\FormChange.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormChange.Designer.cs">
+    <Compile Include="Forms\FormChange.Designer.cs">
       <DependentUpon>FormChange.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormChequeAmt.cs">
+    <Compile Include="Forms\FormChequeAmt.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormChequeAmt.Designer.cs">
+    <Compile Include="Forms\FormChequeAmt.Designer.cs">
       <DependentUpon>FormChequeAmt.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormChequeDetails.cs">
+    <Compile Include="Forms\FormChequeDetails.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormChequeDetails.Designer.cs">
+    <Compile Include="Forms\FormChequeDetails.Designer.cs">
       <DependentUpon>FormChequeDetails.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormCreditVerSlip.cs">
+    <Compile Include="Forms\FormCreditVerSlip.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormCreditVerSlip.Designer.cs">
+    <Compile Include="Forms\FormCreditVerSlip.Designer.cs">
       <DependentUpon>FormCreditVerSlip.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormGiftCard.cs">
+    <Compile Include="Forms\FormGiftCard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormGiftCard.Designer.cs">
+    <Compile Include="Forms\FormGiftCard.Designer.cs">
       <DependentUpon>FormGiftCard.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormLogin.cs">
+    <Compile Include="Forms\FormLogin.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormLogin.Designer.cs">
+    <Compile Include="Forms\FormLogin.Designer.cs">
       <DependentUpon>FormLogin.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormLoyaltyCard.cs">
+    <Compile Include="Forms\FormLoyaltyCard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormLoyaltyCard.Designer.cs">
+    <Compile Include="Forms\FormLoyaltyCard.Designer.cs">
       <DependentUpon>FormLoyaltyCard.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormMain.cs">
+    <Compile Include="Forms\FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormMain.Designer.cs">
+    <Compile Include="Forms\FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormMain3.cs">
+    <Compile Include="Forms\FormMain3.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormMain3.Designer.cs">
+    <Compile Include="Forms\FormMain3.Designer.cs">
       <DependentUpon>FormMain3.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormMemberID.cs">
+    <Compile Include="Forms\FormMemberID.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormMemberID.Designer.cs">
+    <Compile Include="Forms\FormMemberID.Designer.cs">
       <DependentUpon>FormMemberID.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormPayment.cs">
+    <Compile Include="Forms\FormPayment.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormPayment.Designer.cs">
+    <Compile Include="Forms\FormPayment.Designer.cs">
       <DependentUpon>FormPayment.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormPrivilegeCard.cs">
+    <Compile Include="Forms\FormPrivilegeCard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormPrivilegeCard.Designer.cs">
+    <Compile Include="Forms\FormPrivilegeCard.Designer.cs">
       <DependentUpon>FormPrivilegeCard.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormSearchCustomer.cs">
+    <Compile Include="Forms\FormSearchCustomer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormSearchCustomer.Designer.cs">
+    <Compile Include="Forms\FormSearchCustomer.Designer.cs">
       <DependentUpon>FormSearchCustomer.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormSecondScreen.cs">
+    <Compile Include="Forms\FormSecondScreen.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormSecondScreen.Designer.cs">
+    <Compile Include="Forms\FormSecondScreen.Designer.cs">
       <DependentUpon>FormSecondScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="FormCardDetails.resx">
+    <EmbeddedResource Include="Forms\FormCardDetails.resx">
       <DependentUpon>FormCardDetails.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormChange.resx">
+    <EmbeddedResource Include="Forms\FormChange.resx">
       <DependentUpon>FormChange.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormChequeAmt.resx">
+    <EmbeddedResource Include="Forms\FormChequeAmt.resx">
       <DependentUpon>FormChequeAmt.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormChequeDetails.resx">
+    <EmbeddedResource Include="Forms\FormChequeDetails.resx">
       <DependentUpon>FormChequeDetails.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormCreditVerSlip.resx">
+    <EmbeddedResource Include="Forms\FormCreditVerSlip.resx">
       <DependentUpon>FormCreditVerSlip.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormGiftCard.resx">
+    <EmbeddedResource Include="Forms\FormGiftCard.resx">
       <DependentUpon>FormGiftCard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormLogin.resx">
+    <EmbeddedResource Include="Forms\FormLogin.resx">
       <DependentUpon>FormLogin.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormLoyaltyCard.resx">
+    <EmbeddedResource Include="Forms\FormLoyaltyCard.resx">
       <DependentUpon>FormLoyaltyCard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormMain.resx">
+    <EmbeddedResource Include="Forms\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormMain3.resx">
+    <EmbeddedResource Include="Forms\FormMain3.resx">
       <DependentUpon>FormMain3.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormMemberID.resx">
+    <EmbeddedResource Include="Forms\FormMemberID.resx">
       <DependentUpon>FormMemberID.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormPayment.resx">
+    <EmbeddedResource Include="Forms\FormPayment.resx">
       <DependentUpon>FormPayment.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormPrivilegeCard.resx">
+    <EmbeddedResource Include="Forms\FormPrivilegeCard.resx">
       <DependentUpon>FormPrivilegeCard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormSearchCustomer.resx">
+    <EmbeddedResource Include="Forms\FormSearchCustomer.resx">
       <DependentUpon>FormSearchCustomer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormSecondScreen.resx">
+    <EmbeddedResource Include="Forms\FormSecondScreen.resx">
       <DependentUpon>FormSecondScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MACP_POS
+namespace MACP_POS.Forms
 {
     public partial class FormMain : Form
     {
