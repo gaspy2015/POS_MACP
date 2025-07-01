@@ -73,5 +73,211 @@ namespace MACP_POS.DataAccess
                 return false;
             }
         }
+
+        public bool SetCurrentConnection(ConnectionInfo connectionInfo)
+        {
+            if (TestConnection(connectionInfo))
+            {
+                currentConnection = connectionInfo;
+                UpdateAppConfig(connectionInfo);
+                return true;
+            }
+            return false;
+        }
+
+        public void SaveConnection(ConnectionInfo connectionInfo)
+        {
+            // Remove existing connection with same name
+            SavedConnections.RemoveAll(c => c.Name.Equals(connectionInfo.Name, StringComparison.OrdinalIgnoreCase));
+
+            // Add new connection
+            SavedConnections.Add(connectionInfo);
+
+            // Save to file
+            SaveConnectionsToFile();
+        }
+
+        public void DeleteConnection(string name)
+        {
+            SavedConnections.RemoveAll(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            SaveConnectionsToFile();
+        }
+
+        public void LoadConnections()
+        {
+            try
+            {
+                // Load current connection from app.config
+                var defaultConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"];
+                string connectionString = (defaultConnectionString != null) ? defaultConnectionString.ConnectionString : null;
+                if (!string.IsNullOrEmpty(connectionString))
+                {
+                    currentConnection = ConnectionInfo.FromConnectionString(connectionString, "Default");
+                }
+
+                // Load saved connections from file
+                LoadConnectionsFromFile();
+            }
+            catch (Exception ex)
+            {
+                // Log error if needed
+                System.Diagnostics.Debug.WriteLine("Error loading connections: " + ex.Message);
+            }
+        }
+
+        private void LoadConnectionsFromFile()
+        {
+            try
+            {
+                string filePath = GetConnectionsFilePath();
+                if (File.Exists(filePath))
+                {
+                    var xml = new XmlDocument();
+                    xml.Load(filePath);
+
+                    var connectionNodes = xml.SelectNodes("//Connection");
+                    foreach (XmlNode node in connectionNodes)
+                    {
+                        var connectionInfo = new ConnectionInfo
+                        {
+                            Name = node.Attributes["name"] != null ? node.Attributes["name"].Value : "",
+                            ServerName = DecryptString(node.SelectSingleNode("ServerName") != null ? node.SelectSingleNode("ServerName").InnerText : ""),
+                            DatabaseName = node.SelectSingleNode("DatabaseName") != null ? node.SelectSingleNode("DatabaseName").InnerText : "",
+                            Username = DecryptString(node.SelectSingleNode("Username") != null ? node.SelectSingleNode("Username").InnerText : ""),
+                            Password = DecryptString(node.SelectSingleNode("Password") != null ? node.SelectSingleNode("Password").InnerText : ""),
+                            UseIntegratedSecurity = bool.Parse(node.SelectSingleNode("UseIntegratedSecurity") != null ? node.SelectSingleNode("UseIntegratedSecurity").InnerText : "false"),
+                            ConnectionTimeOut = int.Parse(node.SelectSingleNode("ConnectionTimeout") != null ? node.SelectSingleNode("ConnectionTimeout").InnerText : "30")
+                        };
+
+                        SavedConnections.Add(connectionInfo);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error loading connections from file: " + ex.Message);
+            }
+        }
+
+        private void SaveConnectionsToFile()
+        {
+            try
+            {
+                string filePath = GetConnectionsFilePath();
+                var xml = new XmlDocument();
+                var root = xml.CreateElement("Connections");
+                xml.AppendChild(root);
+
+                foreach (var conn in SavedConnections)
+                {
+                    var connectionNode = xml.CreateElement("Connection");
+                    connectionNode.SetAttribute("name", conn.Name);
+
+                    var serverNode = xml.CreateElement("ServerName");
+                    serverNode.InnerText = EncryptString(conn.ServerName);
+                    connectionNode.AppendChild(serverNode);
+
+                    var databaseNode = xml.CreateElement("DatabaseName");
+                    databaseNode.InnerText = conn.DatabaseName;
+                    connectionNode.AppendChild(databaseNode);
+
+                    var usernameNode = xml.CreateElement("Username");
+                    usernameNode.InnerText = EncryptString(conn.Username);
+                    connectionNode.AppendChild(usernameNode);
+
+                    var passwordNode = xml.CreateElement("Password");
+                    passwordNode.InnerText = EncryptString(conn.Password);
+                    connectionNode.AppendChild(passwordNode);
+
+                    var integratedNode = xml.CreateElement("UseIntegratedSecurity");
+                    integratedNode.InnerText = conn.UseIntegratedSecurity.ToString();
+                    connectionNode.AppendChild(integratedNode);
+
+                    var timeoutNode = xml.CreateElement("ConnectionTimeout");
+                    timeoutNode.InnerText = conn.ConnectionTimeOut.ToString();
+                    connectionNode.AppendChild(timeoutNode);
+
+                    root.AppendChild(connectionNode);
+                }
+
+                xml.Save(filePath);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error saving connections to file: " + ex.Message);
+            }
+        }
+
+        private string GetConnectionsFilePath()
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string appFolder = Path.Combine(appDataPath, "MACP_POS");
+
+            if (!Directory.Exists(appFolder))
+                Directory.CreateDirectory(appFolder);
+
+            return Path.Combine(appFolder, "connections.xml");
+        }
+
+        private void UpdateAppConfig(ConnectionInfo connectionInfo)
+        {
+            try
+            {
+                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var connectionString = connectionInfo.ToConnectionString();
+
+                if (config.ConnectionStrings.ConnectionStrings["DefaultConnection"] != null)
+                {
+                    config.ConnectionStrings.ConnectionStrings["DefaultConnection"].ConnectionString = connectionString;
+                }
+                else
+                {
+                    config.ConnectionStrings.ConnectionStrings.Add(
+                        new ConnectionStringSettings("DefaultConnection", connectionString, "System.Data.SqlClient"));
+                }
+
+                config.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection("connectionStrings");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error updating app.config: " + ex.Message);
+            }
+        }
+
+        // Simple encryption for stored passwords (not for production use)
+        private string EncryptString(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return "";
+
+            try
+            {
+                byte[] data = Encoding.UTF8.GetBytes(text);
+                byte[] encrypted = ProtectedData.Protect(data, null, DataProtectionScope.CurrentUser);
+                return Convert.ToBase64String(encrypted);
+            }
+            catch
+            {
+                return text; // Return original if encryption fails
+            }
+        }
+
+        private string DecryptString(string encryptedText)
+        {
+            if (string.IsNullOrEmpty(encryptedText))
+                return "";
+
+            try
+            {
+                byte[] data = Convert.FromBase64String(encryptedText);
+                byte[] decrypted = ProtectedData.Unprotect(data, null, DataProtectionScope.CurrentUser);
+                return Encoding.UTF8.GetString(decrypted);
+            }
+            catch
+            {
+                return encryptedText; // Return original if decryption fails
+            }
+        }
     }
 }
