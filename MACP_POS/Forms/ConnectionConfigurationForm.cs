@@ -328,5 +328,84 @@ namespace MACP_POS.Forms
 
             return null;
         }
+
+        private void btnSaveAs_Click(object sender, EventArgs e)
+        {
+            if (!ValidateInput())
+                return;
+
+            string name = PromptForConnectionName();
+            if (string.IsNullOrEmpty(name))
+                return;
+
+            var connectionInfo = GetConnectionInfoFromForm();
+            connectionInfo.Name = name;
+
+            try
+            {
+                _connectionManager.SaveConnection(connectionInfo);
+
+                lblStatus.Text = "Connection saved as '" + name + "'";
+                lblStatus.ForeColor = Color.Green;
+
+                // Refresh the combo box
+                LoadSavedConnections();
+
+                // Select the new connection
+                int index = cmbSavedConnections.FindString(name);
+                if (index >= 0)
+                    cmbSavedConnections.SelectedIndex = index;
+
+                MessageBox.Show("Connection saved successfully as '" + name + "'!", 
+                    "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                lblStatus.Text = "Error: " + ex.Message;
+                lblStatus.ForeColor = Color.Red;
+                MessageBox.Show("Error saving connection: " + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (cmbSavedConnections.SelectedIndex <= 0)
+                return;
+
+            string connectionName = cmbSavedConnections.SelectedItem.ToString();
+
+            var result = MessageBox.Show(
+                "Are you sure you want to delete the connection '" + connectionName + "'?",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    _connectionManager.DeleteConnection(connectionName);
+                    LoadSavedConnections();
+                    ClearConnectionFields();
+
+                    lblStatus.Text = "Connection '" + connectionName + "' deleted successfully.";
+                    lblStatus.ForeColor = Color.Green;
+                }
+                catch (Exception ex)
+                {
+                    lblStatus.Text = "Error deleting connection: " + ex.Message;
+                    lblStatus.ForeColor = Color.Red;
+                    MessageBox.Show("Error deleting connection: " + ex.Message,
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            ConnectionConfigurationForm_Load(this, e);
+        }
     }
 }
