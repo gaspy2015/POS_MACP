@@ -88,10 +88,10 @@ namespace MACP_POS.DataAccess
         public void SaveConnection(ConnectionInfo connectionInfo)
         {
             // Remove existing connection with same name
-            SavedConnections.RemoveAll(c => c.Name.Equals(connectionInfo.Name, StringComparison.OrdinalIgnoreCase));
+            saveConnections.RemoveAll(c => c.Name.Equals(connectionInfo.Name, StringComparison.OrdinalIgnoreCase));
 
             // Add new connection
-            SavedConnections.Add(connectionInfo);
+            saveConnections.Add(connectionInfo);
 
             // Save to file
             SaveConnectionsToFile();
@@ -99,7 +99,7 @@ namespace MACP_POS.DataAccess
 
         public void DeleteConnection(string name)
         {
-            SavedConnections.RemoveAll(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            saveConnections.RemoveAll(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             SaveConnectionsToFile();
         }
 
@@ -107,16 +107,19 @@ namespace MACP_POS.DataAccess
         {
             try
             {
-                // Load current connection from app.config
-                var defaultConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"];
-                string connectionString = (defaultConnectionString != null) ? defaultConnectionString.ConnectionString : null;
-                if (!string.IsNullOrEmpty(connectionString))
-                {
-                    currentConnection = ConnectionInfo.FromConnectionString(connectionString, "Default");
-                }
-
-                // Load saved connections from file
+                // Load saved connections from file first
                 LoadConnectionsFromFile();
+
+                // Load current connection from app.config only if no current connection is set
+                if (currentConnection == null)
+                {
+                    var defaultConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"];
+                    string connectionString = (defaultConnectionString != null) ? defaultConnectionString.ConnectionString : null;
+                    if (!string.IsNullOrEmpty(connectionString))
+                    {
+                        currentConnection = ConnectionInfo.FromConnectionString(connectionString, "Default");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -149,7 +152,7 @@ namespace MACP_POS.DataAccess
                             ConnectionTimeOut = int.Parse(node.SelectSingleNode("ConnectionTimeout") != null ? node.SelectSingleNode("ConnectionTimeout").InnerText : "30")
                         };
 
-                        SavedConnections.Add(connectionInfo);
+                        saveConnections.Add(connectionInfo);
                     }
                 }
             }
@@ -168,7 +171,7 @@ namespace MACP_POS.DataAccess
                 var root = xml.CreateElement("Connections");
                 xml.AppendChild(root);
 
-                foreach (var conn in SavedConnections)
+                foreach (var conn in saveConnections)
                 {
                     var connectionNode = xml.CreateElement("Connection");
                     connectionNode.SetAttribute("name", conn.Name);
