@@ -80,6 +80,7 @@ namespace MACP_POS.DataAccess
             {
                 currentConnection = connectionInfo;
                 UpdateAppConfig(connectionInfo);
+                SaveConnectionsToFile(); // Add this line to save current connection info
                 return true;
             }
             return false;
@@ -138,6 +139,14 @@ namespace MACP_POS.DataAccess
                     var xml = new XmlDocument();
                     xml.Load(filePath);
 
+                    // Load current connection name
+                    string currentConnectionName = "";
+                    var currentNode = xml.SelectSingleNode("//CurrentConnection");
+                    if (currentNode != null)
+                    {
+                        currentConnectionName = currentNode.InnerText;
+                    }
+
                     var connectionNodes = xml.SelectNodes("//Connection");
                     foreach (XmlNode node in connectionNodes)
                     {
@@ -153,6 +162,12 @@ namespace MACP_POS.DataAccess
                         };
 
                         saveConnections.Add(connectionInfo);
+
+                        // Set as current connection if it matches the saved current connection name
+                        if (!string.IsNullOrEmpty(currentConnectionName) && connectionInfo.Name == currentConnectionName)
+                        {
+                            currentConnection = connectionInfo;
+                        }
                     }
                 }
             }
@@ -170,6 +185,14 @@ namespace MACP_POS.DataAccess
                 var xml = new XmlDocument();
                 var root = xml.CreateElement("Connections");
                 xml.AppendChild(root);
+
+                // Add current connection info
+                if (currentConnection != null)
+                {
+                    var currentNode = xml.CreateElement("CurrentConnection");
+                    currentNode.InnerText = currentConnection.Name ?? "";
+                    root.AppendChild(currentNode);
+                }
 
                 foreach (var conn in saveConnections)
                 {

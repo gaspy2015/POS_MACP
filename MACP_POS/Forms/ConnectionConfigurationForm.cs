@@ -24,25 +24,39 @@ namespace MACP_POS.Forms
 
         private void ConnectionConfigurationForm_Load(object sender, EventArgs e)
         {
-            LoadSavedConnections();
             LoadCurrentConnection();
+            LoadSavedConnections();
             UpdateControlStates();
         }
 
         private void LoadSavedConnections()
         {
             isLoading = true;
-
             cmbSavedConnections.Items.Clear();
             cmbSavedConnections.Items.Add("-- New Connection --");
-
             foreach (var connection in _connectionManager.SavedConnections)
             {
                 cmbSavedConnections.Items.Add(connection.Name);
             }
 
-            if (cmbSavedConnections.Items.Count > 1)
-                cmbSavedConnections.SelectedIndex = 0;
+            // Check if there's a current connection and select it
+            var currentConnection = _connectionManager.CurrentConnection;
+            if (currentConnection != null && !string.IsNullOrEmpty(currentConnection.Name))
+            {
+                int index = cmbSavedConnections.FindString(currentConnection.Name);
+                if (index >= 0)
+                {
+                    cmbSavedConnections.SelectedIndex = index;
+                }
+                else
+                {
+                    cmbSavedConnections.SelectedIndex = 0; // Default to "New Connection"
+                }
+            }
+            else
+            {
+                cmbSavedConnections.SelectedIndex = 0; // Default to "New Connection"
+            }
 
             isLoading = false;
         }
@@ -57,6 +71,11 @@ namespace MACP_POS.Forms
                 txtUsername.Text = currentConnection.Username ?? "";
                 txtPassword.Text = currentConnection.Password ?? "";
                 chkIntegratedSecurity.Checked = currentConnection.UseIntegratedSecurity;
+            }
+            else
+            {
+                // Clear fields if no current connection
+                ClearConnectionFields();
             }
         }
 
