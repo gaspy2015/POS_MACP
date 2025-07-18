@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BusinessLogic\ItemService.cs" />
     <Compile Include="DataAccess\ConnectionInfo.cs" />
     <Compile Include="DataAccess\ConnectionManager.cs" />
     <Compile Include="DataAccess\DBHelper.cs" />
