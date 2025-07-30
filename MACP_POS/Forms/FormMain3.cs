@@ -33,7 +33,19 @@ namespace MACP_POS
             {
                 // Show oading indicator
                 this.Cursor = Cursors.WaitCursor;
-                
+                lblStatus.Text = "Looking up item...";
+
+                // Lookup the item
+                var result = _itemService.GetItemWithPromotions(barcode);
+
+                if (result.Success)
+                {
+                    // Add item to cart
+                    AddItemToCart(result.Item);
+
+                    // Update display
+                    
+                }
             }
             catch (Exception ex)
             {
@@ -90,9 +102,84 @@ namespace MACP_POS
         }
 
         #endregion
-    }
 
-    /// <summary>
+        #region Error Handling
+
+        /// <summary>
+        /// Example: Handle item lookup errors
+        /// </summary>
+        /// <param name="result">Failed lookup result</param>
+        private void HandleItemLookupError(ItemLookupResult result)
+        {
+            string message;
+            MessageBoxIcon icon;
+
+            switch (result.ErrorCode)
+            {
+                case "ITEM_NOT_FOUND":
+                    message = "Item not found or inactive, Please check the barcode.";
+                    icon = MessageBoxIcon.Warning;
+                    break;
+
+                case "INVALID_BARCODE":
+                    message = "Invalid barcode format. Please try again.";
+                    icon = MessageBoxIcon.Error;
+                    break;
+
+                case "DATABASE_ERROR":
+                    message = string.Format("Database error: {0}", result.ErrorMessage);
+                    icon = MessageBoxIcon.Error;
+                    break;
+
+                case "EXCEPTION":
+                    message = string.Format("System error: {0}", result.ErrorMessage);
+                    icon = MessageBoxIcon.Error;
+                    break;
+
+                default:
+                    message = string.Format("Unknown error: {0}", result.ErrorMessage);
+                    icon = MessageBoxIcon.Error;
+                    break;
+            }
+
+            MessageBox.Show(message, "Item Lookup Error", MessageBoxButtons.OK, icon);
+            lblStatus.Text = "Error: " + result.ErrorMessage; 
+        }
+
+        #endregion
+
+        #region Promotion Messages
+
+        /// <summary>
+        /// Example: Show promotion messages to user
+        /// </summary>
+        /// <param name="item">Item with promotion</param>
+        private void ShowPromotionMessage(ItemWithPromotions item)
+        {
+            if (!item.HasPromotion) return;
+            
+           var message = "PROMOTION APPLIED!\n\n";
+                message += String.Format("Promotion: {0}\n", item.PromotionName);
+                message += String.Format("Description: {0}\n", item.PromotionDescription);
+                message += String.Format("You Save: {0}\n", _itemService.FormatCurrency(item.SavingsAmount));
+            
+            if (item.DiscountPercent > 0)
+            {
+                message += String.Format("Discount: {0}% OFF\n", item.DiscountPercent);
+            }
+            
+            if (item.SpecialPrice.HasValue)
+            {
+                message += String.Format("Special Price: {0}\n", _itemService.FormatCurrency(item.SpecialPrice.Value));
+            }
+            
+            // Show promotion message (you might want to use a custom form instead)
+            MessageBox.Show(message, "Promotion Applied", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        #endregion
+
+        /// <summary>
         /// Example: Cart item class
         /// </summary>
         public class CartItem
@@ -127,4 +214,134 @@ namespace MACP_POS
                 get { return LineTotal + LineTax; }
             }
         }
+
+        /// <summary>
+        /// Add item to cart display
+        /// </summary>
+        /// <param name="cartItem">Cart item to add</param>
+        private void AddToCartDisplay(CartItem cartItem)
+        {
+            // Having a DataGridView named dgvCart
+            var rowIndex = dgvCart.Rows.Add();
+            var row = dgvCart.Rows[rowIndex];
+
+            row.Cells["Barcode"].Value = cartItem.Barcode;
+            row.Cells["ProductName"].Value = cartItem.ProductName;
+            row.Cells["Price"].Value = cartItem.FinalPrice;
+            row.Cells["Quantity"].Value = cartItem.Quantity;
+            row.Cells["Total"].Value = cartItem.LineTotal;
+            row.Cells["HasPromotion"].Value = cartItem.HasPromotion;
+            row.Tag = cartItem; // Store the full cart item object
+        }
+
+        /// <summary>
+        /// Update cart totals
+        /// </summary>
+        private void UpdateCartTotals()
+        {
+            decimal subTotal = 0;
+            decimal totalTax = 0;
+            decimal totalSavings = 0;
+
+            foreach (DataGridViewRow row in dgvCart.Rows)
+            {
+                var cartItem = row.Tag as CartItem;
+                if (cartItem != null)
+                {
+                    subTotal += cartItem.LineTotal;
+                    totalTax += cartItem.LineTax;
+                    totalSavings += cartItem.SavingsAmount * cartItem.Quantity;
+                }
+            }
+
+            var grandTotal = subTotal + totalTax;
+
+            // Update total labels
+            //lblSubtotal.Text = _itemService.FormatCurrency(subtotal);
+            //lblTax.Text = _itemService.FormatCurrency(totalTax);
+            //lblSavings.Text = _itemService.FormatCurrency(totalSavings);
+            //lblGrandTotal.Text = _itemService.FormatCurrency(grandTotal);
+        }
+
+        /// <summary>
+        /// Form load event
+        /// </summary>
+        private void FormMain3_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                // Test database connection
+                if (!_itemService.TestConnection())
+                {
+                    MessageBox.Show("Cannot connect to database. Please check your connection.", "Database Connection Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Initialize the form
+                InitializeCartGrid();
+                txtBarcode.Focus();
+                lblStatus.Text = "Ready";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format("Error initializing POS: {0}", ex.Message), "Initialization Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void FormMain3_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                // Dispose of resources
+                if (_itemService != null) _itemService.Dispose();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(string.Format("Error disposing ItemService: {0}", ex.Message));
+            }
+        }
+
+        #region Helper Methods
+
+        /// <summary>
+        /// Initialize the cart data grid
+        /// </summary>
+        private void InitializeCartGrid()
+        {
+            dgvCart.Columns.Clear();
+            dgvCart.Columns.Add("Barcode", "Barcode");
+            dgvCart.Columns.Add("ProductName", "Product Name");
+            dgvCart.Columns.Add("Price", "Price");
+            dgvCart.Columns.Add("Quantity", "Qty");
+            dgvCart.Columns.Add("Total", "Total");
+            dgvCart.Columns.Add("HasPromotion", "Promo");
+
+            // Set columns widths
+            dgvCart.Columns["Barcode"].Width = 100;
+            dgvCart.Columns["ProductName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgvCart.Columns["Pice"].Width = 80;
+            dgvCart.Columns["Quantity"].Width = 50;
+            dgvCart.Columns["Total"].Width = 80;
+            dgvCart.Columns["HasPromotion"].Width = 50;
+
+            // set column types
+            dgvCart.Columns["Price"].DefaultCellStyle.Format = "C2";
+            dgvCart.Columns["Total"].DefaultCellStyle.Format = "C2";
+            dgvCart.Columns["HasPromotion"].DefaultCellStyle.Format = "Yes;No";
+
+            // Center align some columns
+            dgvCart.Columns["Quantity"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvCart.Columns["HasPromotion"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            // Right align currency columns
+            dgvCart.Columns["Price"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvCart.Columns["Total"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+        }
+
+        #endregion
+    }
+
+        
 }
