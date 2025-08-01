@@ -21,7 +21,7 @@ namespace MACP_POS
             _itemService = new ItemService();
         }
 
-        #region Basic Itel lookup from barcode scanner
+        #region Basic Item lookup from barcode scanner
 
         /// <summary>
         /// Handle barcode scanner input
@@ -45,12 +45,28 @@ namespace MACP_POS
 
                     // Update display
                     
+                    // Show any promotions
+                    if (result.Item.HasPromotion)
+                    {
+                        ShowPromotionMessage(result.Item);
+                    }
+
+                    lblStatus.Text = "Item added successfully";
+                }
+                else
+                {
+                    // Handle errors
+                    HandleItemLookupError(result);
                 }
             }
             catch (Exception ex)
             {
-                
-                throw;
+                MessageBox.Show(string.Format("Error processing barcode: {0}", ex.Message), "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
             }
         }
 
@@ -340,7 +356,36 @@ namespace MACP_POS
             dgvCart.Columns["Total"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
+        /// <summary>
+        /// Clear the current transaction
+        /// </summary>
+        private void ClearTransaction()
+        {
+            dgvCart.Rows.Clear();
+            UpdateCartTotals();
+            txtBarcode.Clear();
+            txtBarcode.Focus();
+            lblStatus.Text = "Ready";
+
+            // Clear some fields
+        }
+
         #endregion
+
+        private void txtBarcode_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                e.Handled = true;
+                var barcode = txtBarcode.Text.Trim();
+
+                if (!string.IsNullOrEmpty(barcode))
+                {
+                    ProcessScannedBarcode(barcode);
+                    txtBarcode.Clear();
+                }
+            }
+        }
     }
 
         
