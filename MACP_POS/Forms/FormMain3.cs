@@ -14,11 +14,13 @@ namespace MACP_POS
     public partial class FormMain3 : Form
     {
         private ItemService _itemService;
+        private CashierSessionManager _sessionMnager;
 
         public FormMain3()
         {
             InitializeComponent();
             _itemService = new ItemService();
+            _sessionMnager = new CashierSessionManager();
         }
 
         #region Basic Item lookup from barcode scanner
@@ -372,6 +374,56 @@ namespace MACP_POS
 
         #endregion
 
+        #region Starting Cashier Session
+
+        /// <summary>
+        /// Validate inputs before starting session
+        /// </summary>
+        private bool ValidateSessionInputs()
+        {
+            // Check terminal selection
+            if (string.IsNullOrWhiteSpace(lblTerminalId.Text) || lblTerminalId.Text == "POS")
+            {
+                MessageBox.Show("Please select a terminal.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            // Check cashier ID
+            if (string.IsNullOrWhiteSpace(lblCashierId.Text) || lblCashierId.Text == "OPERATOR ID")
+            {
+                MessageBox.Show("Please enter cashier ID.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            // Check starting amount
+            decimal startingAmount;
+            if (!decimal.TryParse(txtBarcode.Text, out startingAmount))
+            {
+                MessageBox.Show("Please enter a valid starting amount.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtBarcode.Focus();
+                return false;
+            }
+
+            if (startingAmount < 0)
+            {
+                MessageBox.Show("Starting amount cannot be negative.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtBarcode.Focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        private void EnableSessionControls(bool sessionActive)
+        {
+            // Enable/disable controls based on session status
+            btnStartSession.Enabled = !sessionActive;
+            btnEndSession.Enabled = sessionActive;
+            // ... other controls
+        }
+
+        #endregion
+
         private void txtBarcode_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Enter)
@@ -385,6 +437,70 @@ namespace MACP_POS
                     txtBarcode.Clear();
                 }
             }
+        }
+
+        private void btnStartSession_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Validate form inputs first
+                if (!ValidateSessionInputs())
+                    return;
+
+                // Show loading cursor
+                this.Cursor = Cursors.WaitCursor;
+
+                // Create request object
+                var request = new CashierSessionManager.StartSessionRequest
+                {
+                    TerminalID = lblTerminalId.Text.Trim(),
+                    CashierID = lblCashierId.Text.Trim(),
+                    StartingAmount = decimal.Parse(txtBarcode.Text),
+                    UserID = lblCashierId.Text.Trim()
+                };
+
+                // Call business logic
+                var result = _sessionMnager.StartCashierSession(request);
+
+                if (result.IsSuccess)
+                {
+                    // Success - update UI
+                    MessageBox.Show(string.Format("Session started succesfully!\nSession ID: {0}", result.SessionID), "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Store session ID for later use
+                    Properties.Settings.Default.CurrentSessionID = result.SessionID;
+                    Properties.Settings.Default.Save();
+
+                    // Enable/disable relevant controls
+                    EnableSessionControls(true);
+                    txtBarcode.Clear();
+                }
+                else
+                {
+                    // Show error message
+                    MessageBox.Show(result.ErrorMessage, "Error Starting Session", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An unexpected error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            finally
+            {
+                // Reset cursor
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        private void LogError(string operation, string message, Exception ex)
+        {
+            //
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

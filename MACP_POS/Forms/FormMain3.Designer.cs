@@ -33,13 +33,13 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.button29 = new System.Windows.Forms.Button();
-            this.button9 = new System.Windows.Forms.Button();
+            this.btnEndSession = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnStartSession = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.button28 = new System.Windows.Forms.Button();
             this.button18 = new System.Windows.Forms.Button();
@@ -93,8 +93,8 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.lblTerminalId = new System.Windows.Forms.Label();
+            this.lblCashierId = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -160,13 +160,13 @@
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.button29);
-            this.tabPage1.Controls.Add(this.button9);
+            this.tabPage1.Controls.Add(this.btnEndSession);
             this.tabPage1.Controls.Add(this.button5);
             this.tabPage1.Controls.Add(this.button8);
             this.tabPage1.Controls.Add(this.button7);
             this.tabPage1.Controls.Add(this.button6);
             this.tabPage1.Controls.Add(this.button4);
-            this.tabPage1.Controls.Add(this.button3);
+            this.tabPage1.Controls.Add(this.btnStartSession);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -189,18 +189,19 @@
             this.button29.Text = "Exit";
             this.button29.UseVisualStyleBackColor = false;
             // 
-            // button9
+            // btnEndSession
             // 
-            this.button9.BackColor = System.Drawing.Color.DarkGray;
-            this.button9.FlatAppearance.BorderSize = 0;
-            this.button9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button9.Location = new System.Drawing.Point(8, 234);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(203, 32);
-            this.button9.TabIndex = 26;
-            this.button9.Text = "Suspend Shift";
-            this.button9.UseVisualStyleBackColor = false;
+            this.btnEndSession.BackColor = System.Drawing.Color.DarkGray;
+            this.btnEndSession.FlatAppearance.BorderSize = 0;
+            this.btnEndSession.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEndSession.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEndSession.Location = new System.Drawing.Point(8, 234);
+            this.btnEndSession.Name = "btnEndSession";
+            this.btnEndSession.Size = new System.Drawing.Size(203, 32);
+            this.btnEndSession.TabIndex = 26;
+            this.btnEndSession.Text = "Suspend Shift";
+            this.btnEndSession.UseVisualStyleBackColor = false;
+            this.btnEndSession.Click += new System.EventHandler(this.button9_Click);
             // 
             // button5
             // 
@@ -267,18 +268,19 @@
             this.button4.Text = "Add Cash";
             this.button4.UseVisualStyleBackColor = false;
             // 
-            // button3
+            // btnStartSession
             // 
-            this.button3.BackColor = System.Drawing.Color.Salmon;
-            this.button3.FlatAppearance.BorderSize = 0;
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(8, 6);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(203, 32);
-            this.button3.TabIndex = 12;
-            this.button3.Text = "Starting Amount";
-            this.button3.UseVisualStyleBackColor = false;
+            this.btnStartSession.BackColor = System.Drawing.Color.Salmon;
+            this.btnStartSession.FlatAppearance.BorderSize = 0;
+            this.btnStartSession.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStartSession.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStartSession.Location = new System.Drawing.Point(8, 6);
+            this.btnStartSession.Name = "btnStartSession";
+            this.btnStartSession.Size = new System.Drawing.Size(203, 32);
+            this.btnStartSession.TabIndex = 12;
+            this.btnStartSession.Text = "Starting Amount";
+            this.btnStartSession.UseVisualStyleBackColor = false;
+            this.btnStartSession.Click += new System.EventHandler(this.btnStartSession_Click);
             // 
             // tabPage3
             // 
@@ -708,7 +710,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(9, 607);
+            this.label14.Location = new System.Drawing.Point(3, 607);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(58, 24);
             this.label14.TabIndex = 17;
@@ -877,8 +879,8 @@
             this.panel1.Controls.Add(this.label11);
             this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.label9);
-            this.panel1.Controls.Add(this.label8);
-            this.panel1.Controls.Add(this.label7);
+            this.panel1.Controls.Add(this.lblTerminalId);
+            this.panel1.Controls.Add(this.lblCashierId);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.label4);
@@ -938,27 +940,27 @@
             this.label9.TabIndex = 9;
             this.label9.Text = "TRANS";
             // 
-            // label8
+            // lblTerminalId
             // 
-            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(14, 236);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(39, 16);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "POS";
+            this.lblTerminalId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTerminalId.AutoSize = true;
+            this.lblTerminalId.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTerminalId.Location = new System.Drawing.Point(14, 236);
+            this.lblTerminalId.Name = "lblTerminalId";
+            this.lblTerminalId.Size = new System.Drawing.Size(39, 16);
+            this.lblTerminalId.TabIndex = 8;
+            this.lblTerminalId.Text = "POS";
             // 
-            // label7
+            // lblCashierId
             // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(14, 177);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(111, 16);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "OPERATOR ID";
+            this.lblCashierId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblCashierId.AutoSize = true;
+            this.lblCashierId.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCashierId.Location = new System.Drawing.Point(14, 177);
+            this.lblCashierId.Name = "lblCashierId";
+            this.lblCashierId.Size = new System.Drawing.Size(111, 16);
+            this.lblCashierId.TabIndex = 7;
+            this.lblCashierId.Text = "OPERATOR ID";
             // 
             // label6
             // 
@@ -1083,8 +1085,8 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label lblTerminalId;
+        private System.Windows.Forms.Label lblCashierId;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
@@ -1128,13 +1130,13 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Button button29;
-        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button btnEndSession;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnStartSession;
         private System.Windows.Forms.Button button28;
         private System.Windows.Forms.Button button18;
         private System.Windows.Forms.Button button15;

@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="BusinessLogic\CashierSessionManager.cs" />
     <Compile Include="BusinessLogic\ItemService.cs" />
+    <Compile Include="BusinessLogic\VoidTransactionManager.cs" />
     <Compile Include="DataAccess\ConnectionInfo.cs" />
     <Compile Include="DataAccess\ConnectionManager.cs" />
     <Compile Include="DataAccess\DBHelper.cs" />
