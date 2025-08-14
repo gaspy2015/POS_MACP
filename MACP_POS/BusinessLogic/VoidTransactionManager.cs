@@ -18,6 +18,215 @@ namespace MACP_POS.BusinessLogic
             _dbHelper = new DBHelper();
         }
 
+        /// <summary>
+        /// Voids a transaction with the specified parameters
+        /// </summary>
+        /// <param name="request">Void transaction request object</param>
+        /// <returns>VoidTransactionResponse containing the result</returns>
+        public VoidTransactionResponse VoidTransaction(VoidTransactionRequest request)
+        {
+            var response = new VoidTransactionResponse();
+
+            try
+            {
+                // Validate input
+                var validationResult = ValidateRequest(request);
+                if (!validationResult.IsValid)
+                {
+                    response.IsSucess = false;
+                    response.ErrorMessage = validationResult.ErrorMessage;
+                    response.ResultType = VoidResultType.ValidationError;
+                    return response;
+                }
+
+                // Create parameters for stored procedure
+                var parameters = CreateParameters(request);
+
+                // Execute  stored procedure
+                var result = _dbHelper.ExecuteStoredProcedure("sp_VoidTransaction", parameters);
+
+                // Process the result
+                response = ProcessStoredProcedureResult(result);
+            }
+            catch (Exception ex)
+            {
+                response.IsSucess = false;
+                response.ErrorMessage = "An unexpected error occured: " + ex.Message;
+                response.ResultType = VoidResultType.SystemError;
+                response.Exception = ex;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Checks if a transaction can be voided
+        /// </summary>
+        /// <param name="transactionId">Transaction ID to check</param>
+        /// <returns>CanVoidResult indicating if transaction can be voided</returns>
+        public CanVoidResult CanTransactionBeVoided(string transactionId)
+        {
+            var result = new CanVoidResult();
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(transactionId))
+                {
+                    result.CanVoid = false;
+                    result.Reason = "Transaction ID cannot be empty";
+                    return result;
+                }
+
+                var parameters = new[]
+                {
+                    _dbHelper.CreateParameter("@TransactionID", SqlDbType.NVarChar, 20, transactionId)             
+                };
+
+                var query = @"
+                    SELECT 
+                        Status,
+                        CASE 
+                            WHEN Status = 'Completed' THEN 1
+                            WHEN Status = 'Voided' THEN 0
+                            ELSE 0
+                        END AS CanVoid,
+                        CASE 
+                            WHEN Status = 'Voided' THEN 'Transaction is already voided'
+                            WHEN Status != 'Completed' THEN 'Transaction must be completed to void'
+                            ELSE 'Transaction can be voided'
+                        END AS Reason
+                    FROM SalesHeader 
+                    WHERE TransactionID = @TransactionID";
+
+                var data = _dbHelper.ExecuteQuery(query, parameters);
+
+                if (data.Rows.Count == 0)
+                {
+                    result.CanVoid = false;
+                    result.Reason = "Transaction not found";
+                }
+                else
+                {
+                    var row = data.Rows[0];
+                    result.CanVoid = Convert.ToBoolean(row["CanVoid"]);
+                    result.Reason = row["Reason"].ToString();
+                    result.CurrentStatus = row["Status"].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                result.CanVoid = false;
+                result.Reason = "Error checking transaction status: " + ex.Message;
+                result.Exception = ex;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets available void reasons from the database
+        /// </summary>
+        /// <returns>List of void reasons</returns>
+        public List<VoidReason> GetVoidReasons()
+        {
+            var voidReasons = new List<VoidReason>();
+
+            try
+            {
+                var query = @"
+                    SELECT 
+                        ReasonID,
+                        ReasonDescription,
+                        ISNULL(RequiresApproval, 0) AS RequiresApproval,
+                        IsActive
+                    FROM ReasonCode 
+                    WHERE ReasonType = 'Void' AND IsActive = 1
+                    ORDER BY ReasonDescription";
+
+                var data = _dbHelper.ExecuteQuery(query);
+
+                foreach (DataRow row in data.Rows)
+                {
+                    voidReasons.Add(new VoidReason
+                        {
+                            ReasonID = row["ReasonID"].ToString(),
+                            ReasonDescription = row["ReasonDescription"].ToString(),
+                            RequiredApproval = Convert.ToBoolean(row["RequiresApproval"]),
+                            IsActive = Convert.ToBoolean(row["IsActive"])
+                        });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error retrieving void reasons: " + ex.Message, ex);
+            }
+
+            return voidReasons;
+        }
+
+        /// <summary>
+        /// Gets transaction details for display purposes
+        /// </summary>
+        /// <param name="transactionId"></param>
+        /// <returns>TransactionSummary object</returns>
+        public TransactionSummary GetTrasnactionSummary(string transactionId)
+        {
+            var summary = new TransactionSummary();
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(transactionId))
+                {
+                    throw new ArgumentException("Transaction ID cannot be empty");
+                }
+
+                var parameters = new[] { 
+                    _dbHelper.CreateParameter("@TrasnactionID", SqlDbType.NVarChar, 20, transactionId)
+                };
+
+                var query = @"
+                    SELECT 
+                        sh.TransactionID,
+                        sh.TransactionDate,
+                        sh.TotalAmount,
+                        sh.Status,
+                        sh.CashierID,
+                        sh.PrivilegeCardNumber,
+                        COUNT(sd.Barcode) AS ItemCount
+                    FROM SalesHeader sh
+                    LEFT JOIN SalesDetail sd ON sh.TransactionID = sd.TransactionID
+                    WHERE sh.TransactionID = @TransactionID
+                    GROUP BY sh.TransactionID, sh.TransactionDate, sh.TotalAmount, 
+                             sh.Status, sh.CashierID, sh.PrivilegeCardNumber";
+
+                var data = _dbHelper.ExecuteQuery(query, parameters);
+
+                if (data.Rows.Count > 0)
+                {
+                    var row = data.Rows[0];
+                    summary.TransactionID = row["TransactionID"].ToString();
+                    summary.TransactionDate = Convert.ToDateTime(row["TransactionDate"]);
+                    summary.TotalAmount = Convert.ToDecimal(row["TotalAmount"]);
+                    summary.Status = row["Status"].ToString();
+                    summary.CashierID = row["CashierID"].ToString();
+                    summary.PrivilegeCardNumber = row["PrivilegeCardNumber"].ToString();
+                    summary.ItemCount = Convert.ToInt32(row["ItemCount"]);
+                    summary.Found = true;
+                }
+                else
+                {
+                    summary.Found = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                summary.Found = false;
+                summary.ErrorMessage = ex.Message;
+            }
+
+            return summary;
+        }
+
         #region Private Methods
 
         private ValidationResult ValidateRequest(VoidTransactionRequest request)

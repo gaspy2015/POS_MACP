@@ -150,6 +150,12 @@
     <Compile Include="Forms\FormSecondScreen.Designer.cs">
       <DependentUpon>FormSecondScreen.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormVoidTransaction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormVoidTransaction.Designer.cs">
+      <DependentUpon>FormVoidTransaction.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\ConnectionConfigurationForm.resx">
@@ -199,6 +205,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormSecondScreen.resx">
       <DependentUpon>FormSecondScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormVoidTransaction.resx">
+      <DependentUpon>FormVoidTransaction.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
