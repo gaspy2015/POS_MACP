@@ -36,14 +36,100 @@ namespace MACP_POS.Forms
 
         #endregion
 
-        public FormVoidTransaction()
+        public FormVoidTransaction(string userId, string employeeId)
         {
             InitializeComponent();
+            currentUserId = userId;
+            currentEmployeeId = employeeId;
+            _voidManager = new VoidTransactionManager();
         }
+
+        #region Event Handlers
 
         private void FormVoidTransaction_Load(object sender, EventArgs e)
         {
+            // Cnter the form on parent
+            this.CenterToParent();
+        }
 
+        private void LoadVoidReasons()
+        {
+            try
+            {
+                var voidReasons = _voidManager.GetVoidReasons();
+
+                cmbVoidReason.DisplayMember = "ReasonDescription";
+                cmbVoidReason.ValueMember = "ReasonID";
+                cmbVoidReason.DataSource = voidReasons;
+                cmbVoidReason.SelectedIndex = -1;
+            }
+            catch (Exception ex)
+            {
+                ShowError("Error loading void reasons: " + ex.Message);
+            }
+        }
+
+        private void txtTransactionID_TextChanged(object sender, EventArgs e)
+        {
+            // Clear transaction details when ID changes
+            ClearTransactionDetails();
+            btnVoid.Enabled = false;
+        }
+
+        private void txtTransactionID_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow only aphanumeric characters and control keys
+            if (!char.IsLetterOrDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+
+            // Search on Enter key
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                btnSearch_Click(sender, e);
+            }
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            LoadTransactionDetails();
+        }
+
+        private void cmbVoidReason_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbVoidReason.SelectedItem != null)
+            {
+                var selectedReason = (VoidReason)cmbVoidReason.SelectedItem;
+                requiresApproval = selectedReason.RequiredApproval;
+
+                // Show/hide approval code field
+                lblApprovalCode.Visible = requiresApproval;
+                txtApprovalCode.Visible = requiresApproval;
+
+                if (requiresApproval)
+                {
+                    lblApprovalCode.Text = "Approval Code: *";
+                    txtApprovalCode.Focus();
+                }
+                else
+                {
+                    txtApprovalCode.Text = "";
+                }
+
+                ValidateForm();
+            }
+        }
+
+        private void btnVoid_Click(object sender, EventArgs e)
+        {
+            ProcessVoidTransaction();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
 
         private void FormVoidTransaction_FormClosing(object sender, FormClosingEventArgs e)
@@ -53,6 +139,8 @@ namespace MACP_POS.Forms
                 _voidManager.Dispose();
             }
         }
+
+        #endregion
 
         #region Private Methods
 
@@ -287,6 +375,5 @@ namespace MACP_POS.Forms
 
         #endregion
 
-       
     }
 }

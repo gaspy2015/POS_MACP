@@ -81,6 +81,7 @@
             this.btnSearch.TabIndex = 2;
             this.btnSearch.Text = "Search";
             this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // txtTransactionID
             // 
@@ -89,6 +90,8 @@
             this.txtTransactionID.Name = "txtTransactionID";
             this.txtTransactionID.Size = new System.Drawing.Size(220, 20);
             this.txtTransactionID.TabIndex = 1;
+            this.txtTransactionID.TextChanged += new System.EventHandler(this.txtTransactionID_TextChanged);
+            this.txtTransactionID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTransactionID_KeyPress);
             // 
             // label1
             // 
@@ -288,6 +291,7 @@
             this.cmbVoidReason.Name = "cmbVoidReason";
             this.cmbVoidReason.Size = new System.Drawing.Size(320, 21);
             this.cmbVoidReason.TabIndex = 1;
+            this.cmbVoidReason.SelectedIndexChanged += new System.EventHandler(this.cmbVoidReason_SelectedIndexChanged);
             // 
             // label8
             // 
@@ -308,6 +312,7 @@
             this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnVoid
             // 
@@ -323,6 +328,7 @@
             this.btnVoid.TabIndex = 4;
             this.btnVoid.Text = "VOID";
             this.btnVoid.UseVisualStyleBackColor = false;
+            this.btnVoid.Click += new System.EventHandler(this.btnVoid_Click);
             // 
             // FormVoidTransaction
             // 

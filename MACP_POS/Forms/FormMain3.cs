@@ -104,7 +104,7 @@ namespace MACP_POS
                 };
 
                 // Add to cart  display (Datagridview or similar) - call created method
-                //--AddToCartDisplay(cartItem);
+                AddToCartDisplay(cartItem);
 
                 // Update Totals - call created method for this
                 // --UpdateCartTotals(); 
@@ -339,7 +339,7 @@ namespace MACP_POS
             // Set columns widths
             dgvCart.Columns["Barcode"].Width = 100;
             dgvCart.Columns["ProductName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dgvCart.Columns["Pice"].Width = 80;
+            dgvCart.Columns["Price"].Width = 80;
             dgvCart.Columns["Quantity"].Width = 50;
             dgvCart.Columns["Total"].Width = 80;
             dgvCart.Columns["HasPromotion"].Width = 50;

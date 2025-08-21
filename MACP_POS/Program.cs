@@ -17,7 +17,7 @@ namespace MACP_POS
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ConnectionConfigurationForm());
+            Application.Run(new FormMain3());
         }
     }
 }
